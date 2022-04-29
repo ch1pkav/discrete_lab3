@@ -1,6 +1,8 @@
 from math import sqrt, ceil, gcd
 from sympy import randprime
 
+alphabet = "абвгґдеєжзиіїйклмнопрстуфхцчшщьюя"
+
 
 def eratosthenes(num):
     numbers = list(range(2, num+1))
@@ -24,7 +26,7 @@ def generate(a, b):
 
     d = modInverse(e, (p-1) * (q-1))
 
-    return e, d
+    return n, e, d
 
 
 def modInverse(a, m):
@@ -59,6 +61,53 @@ def modInverse(a, m):
     return x
 
 
+def find_row_length(n):
+    row = 33
+    i = 0
+    while row < n:
+        row *= 100
+        row += 33
+        i += 1
+    row //= 100
+    return i
+
+
+def encrypt(message, n, pubkey):
+    message = [alphabet.find(c) + 1 for c in message]
+    i = find_row_length(n)
+    print(message)
+    message = [message[j:j+2*i] for j in range(0, len(message), 2*i)]
+    while len(message[-1]) < 2:
+        message[-1].append(34)
+    print(message)
+    message = [sum(number * 100**index for index, number in
+                   enumerate(block[::-1])) for block in message]
+    print(message)
+    message = [pow(block, pubkey, n) for block in message]
+    print(message)
+    return message
+
+
+def decrypt(message, n, key):
+    message = [pow(block, key, n) for block in message]
+    print(message)
+    decoded_message = []
+    for block in message:
+        buffer = []
+        while block > 0:
+            number = block % 100
+            block //= 100
+            buffer.append(number)
+        print(buffer)
+        decoded_message += buffer[::-1]
+    print(decoded_message)
+    return "".join(alphabet[i-1] if i != 34 else "" for i in decoded_message)
+
+
 if __name__ == "__main__":
     # print(eratosthenes(10000))
-    print(generate(1000000, 100000000))
+    # keys = generate(1, 100)
+    keys = (53*61, 17, 2753)
+    print(keys)
+    secret = encrypt("бодян", *keys[:-1])
+    print(decrypt(secret, keys[0], keys[2]))
