@@ -28,7 +28,7 @@ class Client:
         input_handler = threading.Thread(target=self.write_handler,args=())
         input_handler.start()
 
-    def read_handler(self): 
+    def read_handler(self):
         while True:
             message = self.s.recv(1024).decode()
 

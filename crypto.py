@@ -19,8 +19,11 @@ def generate(a, b):
     while p == q:
         q = randprime(a, b)
 
+    print(p, q)
     n = p * q
+    print(n)
     e = 3
+    print(e)
     while gcd(e, (p-1) * (q-1)) != 1:
         e += 2
 
@@ -62,13 +65,14 @@ def modInverse(a, m):
 
 
 def find_row_length(n):
-    row = 33
+    row = 34
     i = 0
     while row < n:
         row *= 100
-        row += 33
+        row += 34
         i += 1
     row //= 100
+    print(row)
     return i
 
 
@@ -76,8 +80,9 @@ def encrypt(message, n, pubkey):
     message = [alphabet.find(c) + 1 for c in message]
     i = find_row_length(n)
     print(message)
-    message = [message[j:j+2*i] for j in range(0, len(message), 2*i)]
-    while len(message[-1]) < 2:
+    print(i)
+    message = [message[j:j+i] for j in range(0, len(message), i)]
+    while len(message[-1]) < i:
         message[-1].append(34)
     print(message)
     message = [sum(number * 100**index for index, number in
@@ -105,9 +110,7 @@ def decrypt(message, n, key):
 
 
 if __name__ == "__main__":
-    # print(eratosthenes(10000))
-    # keys = generate(1, 100)
-    keys = (53*61, 17, 2753)
+    keys = generate(100, 10000)
     print(keys)
-    secret = encrypt("бодян", *keys[:-1])
+    secret = encrypt("дискретнаматематика", *keys[:-1])
     print(decrypt(secret, keys[0], keys[2]))
