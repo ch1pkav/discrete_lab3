@@ -1,6 +1,8 @@
 import socket
 import crypto
 import threading
+from hashlib import sha3_512
+from binascii import hexlify
 
 
 class Server:
@@ -34,29 +36,41 @@ class Server:
             threading.Thread(target=self.handle_client, args=(c,
                                                               addr,)).start()
 
-    def broadcast(self, msg: str):
+    def broadcast(self, message: str):
         for client in self.clients:
+            message = "server: " + message
 
-            msg = crypto.encrypt(msg, *self.username_lookup[client][1:])
-            msg = " ".join(map(str, msg))
+            message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
 
-            client.send(msg.encode())
+            message = crypto.encrypt(message, *self.username_lookup[client][1:])
+            message = " ".join(map(str, message))
+
+            message = message_hash + " " + message
+
+            client.send(message.encode())
 
     def handle_client(self, c: socket, addr):
         while True:
-            msg = c.recv(1024).decode()
-            msg = list(map(int, msg.split()))
+            message = c.recv(1024).decode()
 
-            msg = crypto.decrypt(msg, self.keys[0], self.keys[2])
+            message_hash = message.split()[0]
+            message = list(map(int, message.split()[1:]))
+
+            message = crypto.decrypt(message, self.keys[0], self.keys[2])
+
+            assert message_hash == hexlify(sha3_512(message.encode()).digest()).decode(),\
+                "message integrity is compromised"
 
             for client in self.clients:
                 if client != c:
-                    msg = self.username_lookup[c][0] + ": " + msg
-                    msg = crypto.encrypt(msg, *self.username_lookup[client]
+                    message = self.username_lookup[c][0] + ": " + message
+                    message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
+                    message = crypto.encrypt(message, *self.username_lookup[client]
                                          [1:])
-                    msg = " ".join(map(str, msg))
+                    message = " ".join(map(str, message))
+                    message = message_hash + " " + message
 
-                    client.send(msg.encode())
+                    client.send(message.encode())
 
 
 if __name__ == "__main__":

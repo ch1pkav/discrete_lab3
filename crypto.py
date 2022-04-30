@@ -110,7 +110,7 @@ if __name__ == "__main__":
     keys = generate(1024)
     # keys = generate(500, 1000)
     print(keys)
-    message = "lol pryit:)"
+    message = "0"
     secret = encrypt(message, *keys[:-1])
     print(secret)
     print(decrypt(secret, keys[0], keys[2]))
