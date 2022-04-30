@@ -1,9 +1,7 @@
-from math import sqrt, ceil, gcd
 from sympy import randprime
 
-alphabet = "абвгґдеєжзиіїйклмнопрстуфхцчшщьюя"
 
-def getGCD(a: int, b: int):
+def gcd(a: int, b: int):
     """
     Returns greatest common divisor (GCD)
     """
@@ -14,7 +12,7 @@ def getGCD(a: int, b: int):
     return a
 
 
-def extended_Euclidean(a: int, b: int):
+def extended_euclidean(a: int, b: int):
     """
     Find the modular multiplicative inverse of a modulo b
     """
@@ -41,15 +39,6 @@ def extended_Euclidean(a: int, b: int):
     return s2
 
 
-def eratosthenes(num):
-    numbers = list(range(2, num+1))
-    for i in range(2, ceil(sqrt(num))):
-        for index, item in enumerate(numbers):
-            if not item % i:
-                numbers.pop(index)
-    return numbers
-
-
 def generate(bit_len):
     b = 2**bit_len - 1
     a = 2**(bit_len - 1)
@@ -67,41 +56,9 @@ def generate(bit_len):
         e += 2
     # print(e)
 
-    d = modInverse(e, (p-1) * (q-1))
+    d = extended_euclidean(e, (p-1) * (q-1))
 
     return n, e, d
-
-
-def modInverse(a, m):
-    m0 = m
-    y = 0
-    x = 1
-
-    if (m == 1):
-        return 0
-
-    while (a > 1):
-
-        # q is quotient
-        q = a // m
-
-        t = m
-
-        # m is remainder now, process
-        # same as Euclid's algo
-        m = a % m
-        a = t
-        t = y
-
-        # Update x and y
-        y = x - q * y
-        x = t
-
-    # Make x positive
-    if (x < 0):
-        x = x + m0
-
-    return x
 
 
 def find_block_length(n, alphalen):
