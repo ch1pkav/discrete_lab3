@@ -21,14 +21,9 @@ class Client:
 
         self.s.send(self.username.encode())
 
-        # create key pairs
         self.keys = crypto.generate(512)
 
-        # exchange public keys
-
         self.s.send(" ".join(map(str, self.keys[:-1])).encode())
-
-        # receive the encrypted secret key
 
         self.serverkey = list(map(int, self.s.recv(1024).decode().split()))
 
@@ -42,16 +37,14 @@ class Client:
             message = self.s.recv(1024).decode()
 
             message_hash = message.split()[0]
+
             message = list(map(int, message.split()[1:]))
 
             message = crypto.decrypt(message, self.keys[0], self.keys[2])
-            # print(message_hash)
-            # print(hexlify(sha3_512(message.encode()).digest()).decode())
 
+            # check hash
             assert message_hash == hexlify(sha3_512(message.encode()).digest()).decode(),\
                 "message integrity is compromised"
-
-            # decrypt message with the secret key
 
             print(message)
 
@@ -59,17 +52,15 @@ class Client:
         while True:
             message = input()
 
+            # create hash in text form
             message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
 
-            # encrypt message with the secrete key
             message = crypto.encrypt(message, self.serverkey[0], self.serverkey[1])
 
             message = " ".join(map(str, message))
 
+            # append hash to message
             message = message_hash + " " + message
-            # print(message)
-            # ...
-
             self.s.send(message.encode())
 
 

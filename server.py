@@ -26,15 +26,17 @@ class Server:
             username = c.recv(1024).decode()
             print(f"{username} tries to connect")
 
+            # get client's pubkey and n
             keys = tuple(map(int, c.recv(1024).decode().split()))
+
             self.broadcast(f'new person has joined: {username}')
             self.username_lookup[c] = username, *keys
             self.clients.append(c)
 
             # send public key to the client
             c.send(" ".join(map(str, self.keys[:-1])).encode())
-            threading.Thread(target=self.handle_client, args=(c,
-                                                              addr,)).start()
+
+            threading.Thread(target=self.handle_client, args=(c, addr)).start()
 
     def broadcast(self, message: str):
         for client in self.clients:
@@ -53,6 +55,7 @@ class Server:
         while True:
             message = c.recv(1024).decode()
 
+            # extract hash and content
             message_hash = message.split()[0]
             message = list(map(int, message.split()[1:]))
 
@@ -63,10 +66,12 @@ class Server:
 
             for client in self.clients:
                 if client != c:
+                    # add username to the message
                     message = self.username_lookup[c][0] + ": " + message
+                    # rehash message because it was modified
                     message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
-                    message = crypto.encrypt(message, *self.username_lookup[client]
-                                         [1:])
+
+                    message = crypto.encrypt(message, *self.username_lookup[client][1:])
                     message = " ".join(map(str, message))
                     message = message_hash + " " + message
 
