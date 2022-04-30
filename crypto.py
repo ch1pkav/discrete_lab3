@@ -3,6 +3,43 @@ from sympy import randprime
 
 alphabet = "абвгґдеєжзиіїйклмнопрстуфхцчшщьюя"
 
+def getGCD(a: int, b: int):
+    """
+    Returns greatest common divisor (GCD)
+    """
+    while b != 0:
+        temp = a
+        a = b
+        b = temp % b
+    return a
+
+
+def extended_Euclidean(a: int, b: int):
+    """
+    Find the modular multiplicative inverse of a modulo b
+    """
+    x = a
+    y = b
+    s2 = 1
+    s1 = 0
+    t2 = 0
+    t1 = 1
+    while y != 0:
+        q = x // y
+        r = x % y
+        x = y
+        y = r
+        s = s2 - q * s1
+        t = t2 - q * t1
+        s2 = s1
+        t2 = t1
+        s1 = s
+        t1 = t
+
+    if (s2 < 0):
+        s2 += b
+    return s2
+
 
 def eratosthenes(num):
     numbers = list(range(2, num+1))
