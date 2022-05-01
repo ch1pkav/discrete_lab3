@@ -39,17 +39,17 @@ class Server:
             threading.Thread(target=self.handle_client, args=(c, addr)).start()
 
     def broadcast(self, message: str):
+        message = "server: " + message
+
+        message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
+        # print(f"message: {message}, hash: {message_hash}")
+
         for client in self.clients:
-            message = "server: " + message
+            new_message = crypto.encrypt(message, *self.username_lookup[client][1:])
+            new_message = " ".join(map(str, new_message))
 
-            message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
-
-            message = crypto.encrypt(message, *self.username_lookup[client][1:])
-            message = " ".join(map(str, message))
-
-            message = message_hash + " " + message
-
-            client.send(message.encode())
+            new_message = message_hash + " " + new_message
+            client.send(new_message.encode())
 
     def handle_client(self, c: socket, addr):
         while True:
@@ -67,15 +67,15 @@ class Server:
             for client in self.clients:
                 if client != c:
                     # add username to the message
-                    message = self.username_lookup[c][0] + ": " + message
+                    new_message = self.username_lookup[c][0] + ": " + message
                     # rehash message because it was modified
-                    message_hash = hexlify(sha3_512(message.encode()).digest()).decode()
+                    message_hash = hexlify(sha3_512(new_message.encode()).digest()).decode()
 
-                    message = crypto.encrypt(message, *self.username_lookup[client][1:])
-                    message = " ".join(map(str, message))
-                    message = message_hash + " " + message
+                    new_message = crypto.encrypt(new_message, *self.username_lookup[client][1:])
+                    new_message = " ".join(map(str, new_message))
+                    new_message = message_hash + " " + new_message
 
-                    client.send(message.encode())
+                    client.send(new_message.encode())
 
 
 if __name__ == "__main__":

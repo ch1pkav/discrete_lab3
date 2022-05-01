@@ -42,6 +42,7 @@ class Client:
 
             message = crypto.decrypt(message, self.keys[0], self.keys[2])
 
+            # print(f"message: {message}, hash: {message_hash}")
             # check hash
             assert message_hash == hexlify(sha3_512(message.encode()).digest()).decode(),\
                 "message integrity is compromised"
