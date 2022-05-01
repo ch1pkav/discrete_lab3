@@ -10,7 +10,8 @@ There are three main modules in this project:
    
    * *decrypt(message: list, n: int, key: int)* - takes 3 arguments: message to decrypt(as a list of encrypted blocks), the first part of public key and private key; then decrypts each block, converts integers to characters and returns the message as a string.
 
-<img scr = 'examples/crypto.png'>
+Output example:
+<img src = 'examples/crypto.png'>
 
 3. [server.py](https://github.com/ch1pkav/discrete_lab3/blob/main/server.py) - module for running a server
 4. [client.py](https://github.com/ch1pkav/discrete_lab3/blob/main/client.py) - module for adding clients 
@@ -29,5 +30,5 @@ python3 client.py
 
 ## Usage example
 
-<img scr = 'examples/chat.png'>
+<img src = 'examples/chat.png'>
 
