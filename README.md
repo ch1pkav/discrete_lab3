@@ -14,6 +14,16 @@ There are three main modules in this project:
 4. [client.py](https://github.com/ch1pkav/discrete_lab3/blob/main/client.py) - module for adding clients 
 
 ## Usage instructions
+1. Launch a server
+```bash
+python3 server.py
+```
+2. Open a new terminal, launch a client and enter a username
+```bash
+python3 client.py
+```
+3. Repeat the previous step to add more clients
+4. Now you can start chatting using clients' terminals
 
 ## Usage example
 
