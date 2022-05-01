@@ -36,6 +36,16 @@ class Server:
             # send public key to the client
             c.send(" ".join(map(str, self.keys[:-1])).encode())
 
+            new_message = "Welcome to the server! Have a great time. /quit to quit"
+
+            message_hash = hexlify(sha3_512(new_message.encode()).digest()).decode()
+
+            new_message = crypto.encrypt(new_message, *self.username_lookup[c][1:])
+            new_message = " ".join(map(str, new_message))
+            new_message = message_hash + " " + new_message
+
+            c.send(new_message.encode())
+
             threading.Thread(target=self.handle_client, args=(c, addr)).start()
 
     def broadcast(self, message: str):
@@ -60,6 +70,13 @@ class Server:
             message = list(map(int, message.split()[1:]))
 
             message = crypto.decrypt(message, self.keys[0], self.keys[2])
+
+            if message == "/quit":
+                print(f"{self.username_lookup[c][0]} has quit")
+                self.clients.remove(c)
+                self.broadcast(f"{self.username_lookup[c][0]} has quit")
+                self.username_lookup.pop(c)
+                break
 
             assert message_hash == hexlify(sha3_512(message.encode()).digest()).decode(),\
                 "message integrity is compromised"
