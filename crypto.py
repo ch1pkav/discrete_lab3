@@ -99,7 +99,7 @@ def encrypt(message: str, n: int, pubkey: int) -> list:
     return message
 
 
-def decrypt(message: str, n: int, key: int) -> str:
+def decrypt(message: list, n: int, key: int) -> str:
     """
     Decrypts a message with private key and mod
     """
@@ -121,9 +121,10 @@ def decrypt(message: str, n: int, key: int) -> str:
 
 
 if __name__ == "__main__":
-    keys = generate(1024)
-    print(keys)
-    message = "0"
+    keys = generate(20)
+    print("keys: ", keys)
+    message = "secret message"
+    print("Message before encryption: ", message)
     secret = encrypt(message, *keys[:-1])
-    print(secret)
-    print(decrypt(secret, keys[0], keys[2]))
+    print("Message after encryption: ",secret)
+    print("Message after decryption: ",decrypt(secret, keys[0], keys[2]))
