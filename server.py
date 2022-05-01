@@ -81,10 +81,13 @@ class Server:
             assert message_hash == hexlify(sha3_512(message.encode()).digest()).decode(),\
                 "message integrity is compromised"
 
+            print(f"{self.username_lookup[c][0]}: {message}")
+
             for client in self.clients:
                 if client != c:
                     # add username to the message
                     new_message = self.username_lookup[c][0] + ": " + message
+
                     # rehash message because it was modified
                     message_hash = hexlify(sha3_512(new_message.encode()).digest()).decode()
 
