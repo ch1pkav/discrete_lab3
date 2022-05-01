@@ -13,8 +13,8 @@ There are three main modules in this project:
 Output example:
 <img src = 'examples/crypto.png'>
 
-3. [server.py](https://github.com/ch1pkav/discrete_lab3/blob/main/server.py) - module for running a server
-4. [client.py](https://github.com/ch1pkav/discrete_lab3/blob/main/client.py) - module for adding clients 
+2. [server.py](https://github.com/ch1pkav/discrete_lab3/blob/main/server.py) - module for running a server
+3. [client.py](https://github.com/ch1pkav/discrete_lab3/blob/main/client.py) - module for adding clients 
 
 ## Usage instructions
 1. Launch a server
